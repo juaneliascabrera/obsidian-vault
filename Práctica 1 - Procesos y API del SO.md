@@ -16,7 +16,7 @@ void Ke_context_switch(PCB* pcb_0, PCB* pcb_1) {
     pcb_0->CPU_TIME = pcb_0->CPU_TIME + ke_current_user_time();
 
     // 2. Guardamos el contexto de CPU del proceso actual en su PCB
-    pcb_0->PC = PC; 
+    pcb_0->PC = PC;
     pcb_0->R0 = R0;
     pcb_0->R1 = R1;
     // ... (podés usar la notación abreviada R0...R15 si es pseudocódigo)
@@ -48,7 +48,7 @@ void Ke_context_switch(PCB* pcb_0, PCB* pcb_1) {
 	* De ready puede pasar a running si el scheduler lo elige
 	* De running puede pasar a ready si el SO decide que terminó su tiempo
 	* De running puede pasar a blocked si pide un servicio externo (por ej: E/S)
-	* De running puede pasar a terminated si se usa exit() 
+	* De running puede pasar a terminated si se usa exit()
 	* De blocked puede pasar a terminated si mandamos sigkill.
 	* De blocked puede pasar a ready si obtiene su dato que lo bloqueó.
 	* De new pasa a ready cuando se termina de crear el PCB
@@ -60,119 +60,73 @@ void Ke_context_switch(PCB* pcb_0, PCB* pcb_1) {
 #include <unistd.h>
 
 int main() {
+    printf("Soy Abraham\n");
 
-	printf("Soy Abraham\n");
+    if (fork() == 0) {
+        // --- Proceso Homero ---
+        printf("Soy Homero\n");
+        char *nombre = "Homero";
 
-	if (fork() == 0) {
+        if (fork() == 0) {
+            // --- Proceso Bart ---
+            printf("Soy Bart\n");
+        } else {
+            if (fork() == 0) {
+                // --- Proceso Lisa ---
+                printf("Soy Lisa\n");
+            } else {
+                if (fork() == 0) {
+                    // --- Proceso Maggie ---
+                    printf("Soy Maggie\n");
+                }
+            }
+        }
+    }
 
-// --- Proceso Homero ---
-		printf("Soy Homero\n");
-		char * nombre = "Homero";
-			if (fork() == 0) {
-			// --- Proceso Bart ---
-			printf("Soy Bart\n");
-
-		} else {
-			if (fork() == 0) {
-		// --- Proceso Lisa ---
-				printf("Soy Lisa\n");
-
-			} else {
-
-				if (fork() == 0) {
-
-				// --- Proceso Maggie ---
-
-				printf("Soy Maggie\n");
-
-			}
-
-		}
-
-	}
-
-}
-return 0;
+    return 0;
 }
 ```
 
 5b)
 ```c
 #include <stdio.h>
-
 #include <unistd.h>
-
 #include <sys/wait.h>
 
-  
-
 int main() {
+    printf("PID: %d, Soy Abraham\n", getpid());
 
-printf("PID: %d, Soy Abraham\n", getpid());
+    if (fork() == 0) {
+        // --- Proceso Homero ---
+        printf("PID: %d, Soy Homero y sigo vivo. Mis hijos vienen ahora\n", getpid());
+        char *nombre = "Homero";
 
-  
+        if (fork() == 0) {
+            // --- Proceso Bart ---
+            printf("Soy Bart\n");
+        } else {
+            wait(NULL);
 
-if (fork() == 0) {
+            if (fork() == 0) {
+                // --- Proceso Lisa ---
+                printf("Soy Lisa\n");
+            } else {
+                wait(NULL);
 
-// --- Proceso Homero ---
+                if (fork() == 0) {
+                    // --- Proceso Maggie ---
+                    printf("Soy Maggie\n");
+                } else {
+                    wait(NULL);
+                    printf("PID: %d, Soy Homero, murieron todos mis hijos.\n", getpid());
+                }
+            }
+        }
+    } else {
+        wait(NULL);
+        printf("PID: %d, Soy Abraham, murieron todos mis hijos y mis nietos.\n", getpid());
+    }
 
-printf("PID: %d, Soy Homero y sigo vivo. Mis hijos vienen ahora\n", getpid());
-
-char * nombre = "Homero";
-
-if (fork() == 0) {
-
-// --- Proceso Bart ---
-
-printf("Soy Bart\n");
-
-} else {
-
-wait(NULL);
-
-if (fork() == 0) {
-
-// --- Proceso Lisa ---
-
-printf("Soy Lisa\n");
-
-} else {
-
-wait(NULL);
-
-if (fork() == 0) {
-
-// --- Proceso Maggie ---
-
-printf("Soy Maggie\n");
-
-}
-
-else{
-
-wait(NULL);
-
-printf("PID: %d, Soy Homero, murieron todos mis hijos.\n", getpid());
-
-}
-
-}
-
-}
-
-}
-
-else{
-
-wait(NULL);
-
-printf("PID: %d, Soy Abraham, murieron todos mis hijos y mis nietos. \n", getpid());
-
-}
-
-  
-
-return 0;
-
+    return 0;
 }
 ```
