@@ -56,77 +56,75 @@ void Ke_context_switch(PCB* pcb_0, PCB* pcb_1) {
 
 5a)
 ```c
-#include <stdio.h>
-#include <unistd.h>
-
 int main() {
     printf("Soy Abraham\n");
 
-    if (fork() == 0) {
-        // --- Proceso Homero ---
+    pid homero = fork();
+    if (homero == 0) {
+        // Proceso Homero
         printf("Soy Homero\n");
-        char *nombre = "Homero";
 
-        if (fork() == 0) {
-            // --- Proceso Bart ---
+        pid bart = fork();
+        if (bart == 0) {
+            // Proceso Bart
             printf("Soy Bart\n");
         } else {
-            if (fork() == 0) {
-                // --- Proceso Lisa ---
+            pid lisa = fork();
+            if (lisa == 0) {
+                // Proceso Lisa
                 printf("Soy Lisa\n");
             } else {
-                if (fork() == 0) {
-                    // --- Proceso Maggie ---
+                pid maggie = fork();
+                if (maggie == 0) {
+                    // Proceso Maggie
                     printf("Soy Maggie\n");
                 }
             }
         }
     }
-
-    return 0;
 }
 ```
 
 5b)
 ```c
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
-
 int main() {
-    printf("PID: %d, Soy Abraham\n", getpid());
+    printf("Soy Abraham\n");
 
-    if (fork() == 0) {
-        // --- Proceso Homero ---
-        printf("PID: %d, Soy Homero y sigo vivo. Mis hijos vienen ahora\n", getpid());
-        char *nombre = "Homero";
+    pid homero = fork();
+    if (homero == 0) {
+        // Proceso Homero
+        printf("Soy Homero y sigo vivo. Mis hijos vienen ahora\n");
 
-        if (fork() == 0) {
-            // --- Proceso Bart ---
+        pid bart = fork();
+        if (bart == 0) {
+            // Proceso Bart
             printf("Soy Bart\n");
-        } else {
-            wait(NULL);
-
-            if (fork() == 0) {
-                // --- Proceso Lisa ---
-                printf("Soy Lisa\n");
-            } else {
-                wait(NULL);
-
-                if (fork() == 0) {
-                    // --- Proceso Maggie ---
-                    printf("Soy Maggie\n");
-                } else {
-                    wait(NULL);
-                    printf("PID: %d, Soy Homero, murieron todos mis hijos.\n", getpid());
-                }
-            }
+            exit(0);
         }
-    } else {
-        wait(NULL);
-        printf("PID: %d, Soy Abraham, murieron todos mis hijos y mis nietos.\n", getpid());
+        wait_for_child(bart);
+
+        pid lisa = fork();
+        if (lisa == 0) {
+            // Proceso Lisa
+            printf("Soy Lisa\n");
+            exit(0);
+        }
+        wait_for_child(lisa);
+
+        pid maggie = fork();
+        if (maggie == 0) {
+            // Proceso Maggie
+            printf("Soy Maggie\n");
+            exit(0);
+        }
+        wait_for_child(maggie);
+
+        printf("Soy Homero, murieron todos mis hijos.\n");
+        exit(0);
     }
 
-    return 0;
+    wait_for_child(homero);
+    printf("Soy Abraham, murieron todos mis hijos y mis nietos.\n");
+    exit(0);
 }
 ```
