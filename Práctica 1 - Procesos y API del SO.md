@@ -128,3 +128,123 @@ int main() {
     exit(0);
 }
 ```
+6)
+```
+#include <stdio.h>
+
+#include <unistd.h>
+
+#include <sys/wait.h>
+
+#include <string.h>
+
+#include <stdlib.h>
+
+  
+
+#define MAX_BUFFER 256
+
+#define MAX_ARGS 32
+
+  
+
+int main() {
+
+char buffer[MAX_BUFFER];
+
+char *args[MAX_ARGS];
+
+  
+
+printf("Ingresá un comando con sus argumentos: ");
+
+fflush(stdout);
+
+  
+
+if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+
+return 0;
+
+}
+
+  
+
+// 1. Eliminar el salto de línea '\n'
+
+buffer[strcspn(buffer, "\n")] = '\0';
+
+  
+
+// 2. Tokenizar la entrada dividiendo por espacios
+
+int i = 0;
+
+char *token = strtok(buffer, " ");
+
+while (token != NULL && i < MAX_ARGS - 1) {
+
+args[i++] = token;
+
+token = strtok(NULL, " ");
+
+}
+
+args[i] = NULL; // El array de argumentos DEBE terminar en NULL
+
+  
+
+// Si el usuario solo apretó Enter sin escribir nada
+
+if (args[0] == NULL) {
+
+return 0;
+
+}
+
+  
+
+// 3. Crear proceso hijo y ejecutar
+
+pid_t pid = fork();
+
+  
+
+if (pid < 0) {
+
+perror("Error al hacer fork");
+
+return 1;
+
+}
+
+  
+
+if (pid == 0) {
+
+// execvp busca automáticamente en el PATH (ej: "ls", "pwd", "echo")
+
+execvp(args[0], args);
+
+  
+
+// Si llega acá, ocurrió un error (ej: comando inexistente)
+
+perror("Error al ejecutar el comando");
+
+exit(1);
+
+} else {
+
+// El proceso padre espera a que el hijo termine
+
+wait(NULL);
+
+}
+
+  
+
+return 0;
+
+}
+```
