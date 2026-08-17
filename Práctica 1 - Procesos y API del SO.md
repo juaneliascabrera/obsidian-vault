@@ -53,3 +53,180 @@ void Ke_context_switch(PCB* pcb_0, PCB* pcb_1) {
 	* De blocked puede pasar a ready si obtiene su dato que lo bloqueó.
 	* De new pasa a ready cuando se termina de crear el PCB
 	* New es el estado inicial de cada proceso apenas fue creado. Luego, pasa a ready.
+
+5a)
+```c
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+
+	printf("Soy Abraham\n");
+
+	if (fork() == 0) {
+
+// --- Proceso Homero ---
+		printf("Soy Homero\n");
+		char * nombre = "Homero";
+			if (fork() == 0) {
+			// --- Proceso Bart ---
+			printf("Soy Bart\n");
+
+		} else {
+			if (fork() == 0) {
+		// --- Proceso Lisa ---
+				printf("Soy Lisa\n");
+
+			} else {
+
+				if (fork() == 0) {
+
+				// --- Proceso Maggie ---
+
+				printf("Soy Maggie\n");
+
+			}
+
+		}
+
+	}
+
+}
+return 0;
+}
+```
+
+5b)
+```c
+#include <stdio.h>
+
+#include <unistd.h>
+
+#include <sys/wait.h>
+
+  
+
+int main() {
+
+printf("PID: %d, Soy Abraham\n", getpid());
+
+  
+
+if (fork() == 0) {
+
+// --- Proceso Homero ---
+
+printf("PID: %d, Soy Homero y sigo vivo. Mis hijos vienen ahora\n", getpid());
+
+char * nombre = "Homero";
+
+if (fork() == 0) {
+
+// --- Proceso Bart ---
+
+printf("Soy Bart\n");
+
+} else {
+
+wait(NULL);
+
+if (fork() == 0) {
+
+// --- Proceso Lisa ---
+
+printf("Soy Lisa\n");
+
+} else {
+
+wait(NULL);
+
+if (fork() == 0) {
+
+// --- Proceso Maggie ---
+
+prin#include <stdio.h>
+
+#include <unistd.h>
+
+  
+
+int main() {
+
+printf("Soy Abraham\n");
+
+  
+
+if (fork() == 0) {
+
+// --- Proceso Homero ---
+
+printf("Soy Homero\n");
+
+char * nombre = "Homero";
+
+if (fork() == 0) {
+
+// --- Proceso Bart ---
+
+printf("Soy Bart\n");
+
+} else {
+
+if (fork() == 0) {
+
+// --- Proceso Lisa ---
+
+printf("Soy Lisa\n");
+
+} else {
+
+if (fork() == 0) {
+
+// --- Proceso Maggie ---
+
+printf("Soy Maggie\n");
+
+}
+
+}
+
+}
+
+}
+
+  
+
+return 0;
+
+}tf("Soy Maggie\n");
+
+}
+
+else{
+
+wait(NULL);
+
+printf("PID: %d, Soy Homero, murieron todos mis hijos.\n", getpid());
+
+}
+
+}
+
+}
+
+}
+
+else{
+
+wait(NULL);
+
+printf("PID: %d, Soy Abraham, murieron todos mis hijos y mis nietos. \n", getpid());
+
+}
+
+  
+
+return 0;
+
+}
+```
