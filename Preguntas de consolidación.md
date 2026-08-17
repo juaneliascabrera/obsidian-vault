@@ -22,4 +22,54 @@
 No hay otros valores posibles; "negativos distintos de -1" no ocurren. Por eso el patrón típico es `if (pid < 0) { /* error */ }`, `else if (pid == 0) { /* hijo */ }`, `else { /* padre */ }`.
 
 3. ¿Cuáles son los headers correctos para las syscalls más utilizadas? fork() -que aparentemente no es una syscall sino un wrapper sobre clone >:c-, wait(), waitpid(), kill(), etc.
+
+**Respuesta:**
+La regla práctica es: **mirá el `man` de cada función** (p. ej. `man 2 fork`, `man 3 printf`) y en la sección *SYNOPSIS* te dice qué header incluir. Para las más comunes de la materia:
+
+| Función | Header(s) |
+|---|---|
+| `fork()` | `<unistd.h>` |
+| `getpid()`, `getppid()` | `<unistd.h>` |
+| `wait()`, `waitpid()` | `<sys/wait.h>` |
+| `kill()` | `<signal.h>` |
+| `signal()`, `sigaction()` | `<signal.h>` |
+| `sigemptyset`, `sigaddset`, `sigprocmask`, `sigsuspend` | `<signal.h>` |
+| `execve()` | `<unistd.h>` |
+| `execl`, `execlp`, `execle`, `execv`, `execvp`, `execvpe` | `<unistd.h>` |
+| `pipe()` | `<unistd.h>` |
+| `read()`, `write()`, `close()` | `<unistd.h>` |
+| `open()` | `<fcntl.h>` |
+| `exit()` | `<stdlib.h>` |
+| `pause()` | `<unistd.h>` |
+| `sleep()` | `<unistd.h>` |
+| `printf()` | `<stdio.h>` |
+| `malloc()`, `free()` | `<stdlib.h>` |
+| `perror()`, `errno` | `<stdio.h>` y `<errno.h>` |
+| `atoi()` | `<stdlib.h>` |
+
+Sobre lo de `fork()`: es correcto que **no es exactamente una syscall directa**. En Linux, `fork()` es una función de la libc (un *wrapper*) que internamente invoca la syscall **`clone()`** con flags que indican "no compartas casi nada" (espacio de memoria, files, señales, etc. separados). Por eso en `strace` a veces ves `clone(...)` y no `fork(...)`. A efectos de la materia, decimos que "`fork()` crea un proceso" y está bien; solo hay que saber que por debajo se apoya en `clone()`.
+
 4. ¿Cuáles son las señales más comunes?
+
+**Respuesta:**
+Las señales son un número, pero se usan macros de `<signal.h>`. Las que conviene conocer de memoria:
+
+| Señal | Nº (x86/Linux) | Significado | Acción por defecto |
+|---|---|---|---|
+| `SIGHUP` | 1 | Colgar la terminal (hangup) | Terminar |
+| `SIGINT` | 2 | Interrupción (Ctrl+C) | Terminar |
+| `SIGQUIT` | 3 | Salir y volcar core (Ctrl+\) | Core dump |
+| `SIGKILL` | 9 | Terminar **a la fuerza** | Terminar |
+| `SIGSEGV` | 11 | Violación de segmento (acceso inválido a memoria) | Core dump |
+| `SIGPIPE` | 13 | Escribir en un pipe sin lector | Terminar |
+| `SIGALRM` | 14 | Temporizador `alarm()` | Terminar |
+| `SIGTERM` | 15 | Terminación "amable" (pedido) | Terminar |
+| `SIGCHLD` | 17 | Un hijo terminó o cambió de estado | Ignorar |
+| `SIGCONT` | 18 | Continuar un proceso parado | Continuar |
+| `SIGSTOP` | 19 | Parar el proceso | Parar |
+| `SIGTSTP` | 20 | Parar desde terminal (Ctrl+Z) | Parar |
+
+Dos reglas importantes:
+
+- **`SIGKILL` y `SIGSTOP` no se pueden ignorar, bloquear ni redefinir su handler.** `SIGKILL` siempre termina y `SIGSTOP` siempre para.
+- **`SIGINT`** es la que mandás con `Ctrl+C`; **`SIGTSTP`** con `Ctrl+Z`; y `kill -9 PID` manda **`SIGKILL`**.
