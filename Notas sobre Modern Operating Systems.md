@@ -33,18 +33,6 @@ Obviando que deberíamos, al ser muy buena práctica, hacer validaciones (por ej
 
 Veamos un diagrama simplificado de una llamada a la syscall `read`
 ![[Pasted image 20260816142147.png]]
-<<<<<<< HEAD
-1. Primero se pasa fd por el registro RDI (esto en un x86-64 System-V-ABI)
-2. Luego pasamos buffer por el RSI
-3. Pasamos finalmente nbytes por RDX
-4. El SO coloca el código correspondiente de la syscall en el registro RAX
-5. Hacemos efectivo el llamado a la función read (jump)
-6. Hacemos el trap y pasamos a modo kernel. 
-7. Se hace el dispatch hacia el handler
-8. Se ejecuta el handler
-9. '***Potencialmente'*** volvemos al usuario.
-10. Siguiente instrucción
-=======
 1. Se coloca el número de syscall de `read` en el registro RAX (esto lo hace el wrapper en modo usuario, no el SO)
 2. Se pasa `fd` por el registro RDI (x86-64 System V ABI)
 3. Se pasa `buffer` por el registro RSI
@@ -54,7 +42,6 @@ Veamos un diagrama simplificado de una llamada a la syscall `read`
 7. Se ejecuta el handler
 8. '***Potencialmente'*** volvemos al usuario.
 9. Siguiente instrucción
->>>>>>> origin/main
 
 Remarquemos el paso 8: 'potencialmente' supongamos que se estaba pidiendo leer desde el teclado, si no hay ningún input, el sistema se quedará esperando E/S (seguramente el scheduler busque otros procesos que se están ejecutando y cuando nuestro proceso vuelva a pasar de blocked a ready, el scheduler podrá considerarlo de nuevo para ejecución)
 
