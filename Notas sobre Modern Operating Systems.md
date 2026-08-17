@@ -9,6 +9,11 @@ Las syscalls terminan siendo esta abstracción que el sistema operativo le prove
 Es muy importante recordar que las syscalls varían mucho de sistema a sistema. Cantidad de parámetros, concepto, etc. En esencia, comparten el mismo comportamiento, por lo que es posible, y de hecho, es estándar, tener librerías comunes '_procedure library_' donde tengamos una capa más sobre estas abstracciones. Comunmente está en C.
 
 ```c
+#include <fcntl.h>      // open, O_RDONLY
+#include <unistd.h>     // read, close
+#include <stdio.h>      // printf
+#include <sys/types.h>  // ssize_t
+
 int main() {
 	char buffer[128]; //Array de 128 chars (buffer)
 	int fd = open("/home/qobro/uba/so/syscalls/test.txt", O_RDONLY); //Abrimos el archivo en modo READ ONLY
@@ -28,6 +33,7 @@ Obviando que deberíamos, al ser muy buena práctica, hacer validaciones (por ej
 
 Veamos un diagrama simplificado de una llamada a la syscall `read`
 ![[Pasted image 20260816142147.png]]
+<<<<<<< HEAD
 1. Primero se pasa fd por el registro RDI (esto en un x86-64 System-V-ABI)
 2. Luego pasamos buffer por el RSI
 3. Pasamos finalmente nbytes por RDX
@@ -38,8 +44,19 @@ Veamos un diagrama simplificado de una llamada a la syscall `read`
 8. Se ejecuta el handler
 9. '***Potencialmente'*** volvemos al usuario.
 10. Siguiente instrucción
+=======
+1. Se coloca el número de syscall de `read` en el registro RAX (esto lo hace el wrapper en modo usuario, no el SO)
+2. Se pasa `fd` por el registro RDI (x86-64 System V ABI)
+3. Se pasa `buffer` por el registro RSI
+4. Se pasa `nbytes` por el registro RDX
+5. Se ejecuta la instrucción `syscall` (el trap) y se pasa a modo kernel
+6. Se hace el dispatch hacia el handler
+7. Se ejecuta el handler
+8. '***Potencialmente'*** volvemos al usuario.
+9. Siguiente instrucción
+>>>>>>> origin/main
 
-Remarquemos el paso 9: 'potencialmente' supongamos que se estaba pidiendo leer desde el teclado, si no hay ningún input, el sistema se quedará esperando E/S (seguramente el scheduler busque otros procesos que se están ejecutando y cuando nuestro proceso vuelva a pasar de blocked a ready, el scheduler podrá considerarlo de nuevo para ejecución)
+Remarquemos el paso 8: 'potencialmente' supongamos que se estaba pidiendo leer desde el teclado, si no hay ningún input, el sistema se quedará esperando E/S (seguramente el scheduler busque otros procesos que se están ejecutando y cuando nuestro proceso vuelva a pasar de blocked a ready, el scheduler podrá considerarlo de nuevo para ejecución)
 
 ### Syscalls para manejo de procesos
 Una de las syscalls más importantes (si no la más) es `fork()`, fork permite lanzar un proceso hijo desde un proceso padre. El proceso es exactamente igual por ese instante y devuelve el _pid_ del proceso hijo en el contexto del proceso padre y 0 en el contexto del proceso hijo forkeado.
