@@ -31,8 +31,8 @@ Veamos un diagrama simplificado de una llamada a la syscall `read`
 1. Primero se pasa fd por el registro RDI (esto en un x86-64 System-V-ABI)
 2. Luego pasamos buffer por el RSI
 3. Pasamos finalmente nbytes por RDX
-4. Hacemos efectivo el llamado a la función read (jump)
-5. El SO coloca el código correspondiente de la syscall en el el registro RAX
+4. El SO coloca el código correspondiente de la syscall en el el registro RAX
+5. Hacemos efectivo el llamado a la función read (jump)
 6. Hacemos el trap y pasamos a modo kernel. 
 7. Se hace el dispatch hacia el handler
 8. Se ejecuta el handler
@@ -42,4 +42,4 @@ Veamos un diagrama simplificado de una llamada a la syscall `read`
 Remarquemos el paso 9: 'potencialmente' supongamos que se estaba pidiendo leer desde el teclado, si no hay ningún input, el sistema se quedará esperando E/S (seguramente el scheduler busque otros procesos que se están ejecutando y cuando nuestro proceso vuelva a pasar de blocked a ready, el scheduler podrá considerarlo de nuevo para ejecución)
 
 ### Syscalls para manejo de procesos
-Una de las syscalls más importantes (si no la más) es `fork()`, fork permite lanzar un proceso hijo desde un proceso padre. El proceso es exactamente igual por ese instante y devuelve el _pid_ del proceso padre en el contexto del proceso padre y 0 en el contexto del proceso hijo forkeado.
+Una de las syscalls más importantes (si no la más) es `fork()`, fork permite lanzar un proceso hijo desde un proceso padre. El proceso es exactamente igual por ese instante y devuelve el _pid_ del proceso hijo en el contexto del proceso padre y 0 en el contexto del proceso hijo forkeado.
