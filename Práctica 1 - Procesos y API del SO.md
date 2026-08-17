@@ -8,7 +8,7 @@
 	* El scheduler ejecuta el siguiente proceso elegido.
 	* Se carga MMU y PCB del proceso elegido.
 	* Se cargan registros del nuevo proceso
-	* Se vuelve a modo usuario.
+	* Se vuelve a modo usuario
 	2) 
 ```c
 void Ke_context_switch(PCB* pcb_0, PCB* pcb_1) {
