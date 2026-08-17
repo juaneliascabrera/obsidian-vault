@@ -21,4 +21,4 @@
 
 No hay otros valores posibles; "negativos distintos de -1" no ocurren. Por eso el patrón típico es `if (pid < 0) { /* error */ }`, `else if (pid == 0) { /* hijo */ }`, `else { /* padre */ }`.
 
-3.
+3. ¿Cuáles son los headers correctos para las syscalls más utilizadas? fork() -que aparentemente no es una syscall sino un wrapper sobre clone >:c-, wait(), waitpid(), kill(), etc.
