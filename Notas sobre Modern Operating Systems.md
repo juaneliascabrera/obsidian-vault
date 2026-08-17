@@ -31,7 +31,7 @@ Veamos un diagrama simplificado de una llamada a la syscall `read`
 1. Primero se pasa fd por el registro RDI (esto en un x86-64 System-V-ABI)
 2. Luego pasamos buffer por el RSI
 3. Pasamos finalmente nbytes por RDX
-4. El SO coloca el código correspondiente de la syscall en el el registro RAX
+4. El SO coloca el código correspondiente de la syscall en el registro RAX
 5. Hacemos efectivo el llamado a la función read (jump)
 6. Hacemos el trap y pasamos a modo kernel. 
 7. Se hace el dispatch hacia el handler
