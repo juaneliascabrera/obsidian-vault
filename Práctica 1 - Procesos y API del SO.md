@@ -144,61 +144,7 @@ if (fork() == 0) {
 
 // --- Proceso Maggie ---
 
-prin#include <stdio.h>
-
-#include <unistd.h>
-
-  
-
-int main() {
-
-printf("Soy Abraham\n");
-
-  
-
-if (fork() == 0) {
-
-// --- Proceso Homero ---
-
-printf("Soy Homero\n");
-
-char * nombre = "Homero";
-
-if (fork() == 0) {
-
-// --- Proceso Bart ---
-
-printf("Soy Bart\n");
-
-} else {
-
-if (fork() == 0) {
-
-// --- Proceso Lisa ---
-
-printf("Soy Lisa\n");
-
-} else {
-
-if (fork() == 0) {
-
-// --- Proceso Maggie ---
-
 printf("Soy Maggie\n");
-
-}
-
-}
-
-}
-
-}
-
-  
-
-return 0;
-
-}tf("Soy Maggie\n");
 
 }
 
