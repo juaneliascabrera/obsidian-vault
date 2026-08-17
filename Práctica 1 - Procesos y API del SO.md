@@ -190,3 +190,5 @@ int main() {
     return 0;
 }
 ```
+8)
+Entiendo que no deberían ser iguales. Voy a compilarlo para ver qué sucede. Pero, en principio, al hacer un fork(), la memoria virtual asignada al proceso padre es 'copiada' al hijo siempre y cuando el hijo no la modifique: es decir, se mapean a la misma dirección física para evitar la duplicación del dato (Copy-On-Write), por tanto, en el contexto del hijo, imprimirá 1, 2,  3 y en el contexto del padre, 0, 0, 0.
