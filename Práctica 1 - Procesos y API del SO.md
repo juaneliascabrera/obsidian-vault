@@ -5,7 +5,7 @@
 	* Interrupción o syscall: paso a modo kernel.
 	* Guardado de IP
 	* Guardado de registros en el PCB del proceso.
-	* El scheduler ejecuta el siguiente proceso elegido.
+	* El scheduler elige el siguiente proceso a ejecutar.
 	* Se carga MMU y PCB del proceso elegido.
 	* Se cargan registros del nuevo proceso
 	* Se vuelve a modo usuario
@@ -43,7 +43,7 @@ void Ke_context_switch(PCB* pcb_0, PCB* pcb_1) {
 }
 ```
 3) Describir la diferencia entre un system call y una llamada a función de biblioteca. 
-	Básicamente, una system call o syscall es un tipo de función particular que provee el SO como API para comunicarse con él y poder acceder a los recursos del hardware mediante una abstracción, volviendo agnóstico al desarrollador de tener que conocer el hardware del sistema sobre el que está programando. Una función de biblioteca es de más alto nivel y puede estar compuestas por otras syscalls. Además, las funciones de biblioteca corren en nivel de usuario (ring 3) y las syscalls en nivel de kernel (nivel 0).
+	Básicamente, una system call o syscall es un tipo de función particular que provee el SO como API para comunicarse con él y poder acceder a los recursos del hardware mediante una abstracción, volviendo agnóstico al desarrollador de tener que conocer el hardware del sistema sobre el que está programando. Una función de biblioteca es de más alto nivel y pueden estar compuestas por otras syscalls. Además, las funciones de biblioteca corren en nivel de usuario (ring 3) y las syscalls se invocan desde nivel de usuario, pero el código que las implementa corre en nivel de kernel (ring 0).
 4)  ![[Pasted image 20260816170049.png]]
 	* De ready puede pasar a running si el scheduler lo elige
 	* De running puede pasar a ready si el SO decide que terminó su tiempo
